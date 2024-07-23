@@ -1,8 +1,11 @@
 package com.remedios.curso.repositories;
 
+import com.remedios.curso.remedio.DadosListagemRemedios;
 import com.remedios.curso.remedio.Remedio;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RemedioRepository extends JpaRepository<Remedio, Long> {
+import java.util.List;
 
+public interface RemedioRepository extends JpaRepository<Remedio, Long> {
+    List<Remedio> findAllByAtivoTrue();
 }

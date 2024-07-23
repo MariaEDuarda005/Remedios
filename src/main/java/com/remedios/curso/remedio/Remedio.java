@@ -28,7 +28,7 @@ public class Remedio {
     @Enumerated(EnumType.STRING)
     private Laboratorio laboratorio;
 
-    // criar um atributo responsavel por dizer que determinado item esta ativo ou inativo
+    // criar um atributo responsavel por dizer que determinado item esta ativo ou inativo, para realizar a exclusão logica
     private Boolean ativo;
 
     public Remedio(DadosCadastroRemedio dados) {
@@ -43,8 +43,9 @@ public class Remedio {
     }
 
     public void atualizarInformacoes(@Valid DadosAtualizarRemedio dados){
+        // se não for nulo, pode salvar
         if (dados.nome() != null) {
-            this.nome = dados.nome(); // se não for nulo, pode salvar
+            this.nome = dados.nome();
         }
 
         if (dados.via() != null){
@@ -58,6 +59,14 @@ public class Remedio {
         if (dados.laboratorio() != null){
             this.laboratorio = dados.laboratorio();
         }
+    }
+
+    public void inativar() {
+        this.ativo = false;
+    }
+
+    public void reativar() {
+        this.ativo = true;
     }
 }
 
