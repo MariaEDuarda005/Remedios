@@ -21,17 +21,12 @@ public class RemedioController {
     @PostMapping
     @Transactional
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroRemedio dados, UriComponentsBuilder uriBuilder){
-        var remedio = new Remedio(dados); // criou uma variavel, que recebeu um novo remedio com parametro dos dados do DTO, deixando salvo na requisição
-        repository.save(remedio); // salvo no banco de dados
+        var remedio = new Remedio(dados);
+        repository.save(remedio);
         System.out.println(dados);
 
-        // utilizando uma classe já do spring UriComponents dentro da uri
-        // dentro da variavel chamamos o parametro, depois dar um ponto path que busca o caminho da url e complementar pegando o id do novo remedio criado
-        // depois de tudo isso vai estar tranformando em uma url com o toUri
         var uri = uriBuilder.path("/api/v1/remedios/{id}").buildAndExpand(remedio.getId()).toUri();
 
-        // retorna um responseEntity com o metodo create e como parametro vai ter a uri e dentro do body o detalhamento do registro que vai pegar como
-        // parametro a variavel que criamos
         return ResponseEntity.created(uri).body(new DadosDetalhamentoRemedio(remedio));
     }
 
@@ -44,12 +39,9 @@ public class RemedioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<DadosListagemRemedios>> remedioId(@PathVariable Long id){
-        var remediosId = repository.findById(id)
-                .stream()
-                .map(DadosListagemRemedios::new)
-                .toList();
-        return ResponseEntity.ok(remediosId);
+    public ResponseEntity<DadosDetalhamentoRemedio> detalharRemedio(@PathVariable Long id){
+        var remediosId = repository.getReferenceById(id);
+        return ResponseEntity.ok(new DadosDetalhamentoRemedio(remediosId));
     }
 
     @PutMapping
