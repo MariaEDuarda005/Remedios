@@ -2,6 +2,7 @@ package com.remedios.curso.infra;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,17 +24,15 @@ public class TratadorDeErros {
     // qualquer lugar da aplicação que acontecer algum erro de validação
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> tratador400(MethodArgumentNotValidException ex){
-        var erros = ex.getFieldError();
-        return ResponseEntity.badRequest().body(erros.stream().map(DadosErros::new).toList);
+        var erros = ex.getFieldErrors();
+        return ResponseEntity.badRequest().body(erros.stream().map(DadosErros::new).toList());
     }
 
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<?> tratador404Post(){
-
-        return ResponseEntity.badRequest().build();
-    }
-
-    public record DadosErros(String message, String field){
+    public record DadosErros(String field, String message){
         // criando um dto dentro da classe
+
+        public DadosErros(FieldError erro){
+            this(erro.getField(), erro.getDefaultMessage());
+        }
     }
 }
